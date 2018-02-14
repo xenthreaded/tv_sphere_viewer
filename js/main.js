@@ -29,6 +29,23 @@ class Etoile {
         this.x = nx;
         this.y = ny;
     }
+
+    rotate3D(angle_a, angle_b, anchor) {
+        let radians_a = (Math.PI / 180) * angle_a,
+            radians_b = (Math.PI / 180) * angle_b,
+            cos_a = Math.cos(radians_a),
+            cos_b = Math.cos(radians_b),
+            sin_a = Math.sin(radians_a),
+            sin_b = Math.sin(radians_b),
+            nx = (cos_a * (this.x - anchor.x)) - (sin_a * cos_b * (this.y - anchor.y)) + (sin_a * sin_b * (this.z - anchor.z)) + anchor.x,
+            ny = (sin_a * (this.x - anchor.x)) + (cos_a * cos_b * (this.y - anchor.y)) - (cos_a * sin_b * (this.z - anchor.z)) + anchor.y,
+            nz = (sin_b * (this.y - anchor.y)) + (cos_b * (this.z - anchor.z)) + anchor.z;
+            //putain d'opérations de matrices
+
+            this.x = nx;
+            this.y = ny;
+            this.z = nz;
+    }
 }
 
 class Univers {
@@ -108,6 +125,12 @@ class Univers {
             this.etoiles[i].rotate2D(angle, this.fantir);
         }
     }
+
+    rotate3D(angle_a, angle_b) {
+        for (let i = 0; i < this.etoiles.length; i++) {
+            this.etoiles[i].rotate3D(angle_a, angle_b, this.fantir);
+        }
+    }
 }
 
 window.onload = function() {
@@ -123,11 +146,9 @@ window.onload = function() {
     let sphere = new Univers("map", etoiles);
     sphere.draw();
 
-    /*
     let interval = setInterval(animate, 1000/60);
     function animate() {
-        sphere.rotate2D(2);
+        sphere.rotate3D(2,2);
         sphere.draw();
     }
-    */
 }
