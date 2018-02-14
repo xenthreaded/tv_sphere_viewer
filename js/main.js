@@ -121,6 +121,7 @@ window.onload = function() {
     ];
 
     let sphere = new Univers("map", etoiles);
+    sphere.draw();
 
     /*
     let interval = setInterval(animate, 1000/60);
