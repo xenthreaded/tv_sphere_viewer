@@ -15,7 +15,17 @@ class Etoile {
         target.fill()
         target.closePath();
     }
+    
+    rotate2D(angle, anchor) {
+        let radians = (Math.PI / 180) * angle,
+            cos = Math.cos(radians),
+            sin = Math.sin(radians),
+            nx = (cos * (this.x - anchor.x)) + (sin * (this.y - anchor.y)) + anchor.x,
+            ny = (cos * (this.y - anchor.y)) - (sin * (this.x - anchor.x)) + anchor.y;
 
+        this.x = nx;
+        this.y = ny;
+    }
 }
 
 window.onload = function() {
@@ -65,7 +75,8 @@ window.onload = function() {
     let systemes = new Array();
     //rayon du symbole != taille de l'étoile ; juste par souci de responsivité
     let fantir = new Etoile(fantir_x, fantir_y, fantir_z, 1*AL, "#ff0"); 
-    systemes.push(fantir);
+    fantir.draw(context);
+
     let sol = new Etoile(fantir_x+15*AL, fantir_y-46.7*AL, fantir_z+35*AL, 1*AL, "#f00");
     systemes.push(sol);
     let alt = new Etoile(fantir_x+41.7*AL, fantir_y-21.3*AL, fantir_z-1*AL, 1*AL, "#f00");
@@ -80,5 +91,15 @@ window.onload = function() {
     for (let i = 0; i < systemes.length; i++) {
         systemes[i].draw(context);
     }
-}
 
+    document.addEventListener('keyup', (event) => {
+        const keyName = event.key;
+
+        if (keyName === 'l') {
+            for (let i = 0; i < systemes.length; i++) {
+                systemes[i].rotate2D(10, fantir);
+                systemes[i].draw(context);
+            }
+        }
+    }, false)
+}
