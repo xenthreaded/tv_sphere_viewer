@@ -1,4 +1,6 @@
-//TODO : clean code (let AL = this.AL !!!)
+//TODO : 
+//  clean code (let AL = this.AL !!!)
+//  check a solution for rotate3D that doesn't need applying a rotation for each axis
 
 class Etoile {
     constructor(name, x, y, z, r, color) {
@@ -33,16 +35,19 @@ class Etoile {
         this.y = ny;
     }
 
-    rotate3D(angle_a, angle_b, anchor) {
+    rotate3D(angle_a, angle_b, angle_c, anchor) {
         let radians_a = (Math.PI / 180) * angle_a,
             radians_b = (Math.PI / 180) * angle_b,
+            radians_c = (Math.PI / 180) * angle_c,
             cos_a = Math.cos(radians_a),
             cos_b = Math.cos(radians_b),
+            cos_c = Math.cos(radians_c),
             sin_a = Math.sin(radians_a),
             sin_b = Math.sin(radians_b),
-            nx = (cos_a * (this.x - anchor.x)) - (sin_a * cos_b * (this.y - anchor.y)) + (sin_a * sin_b * (this.z - anchor.z)) + anchor.x,
-            ny = (sin_a * (this.x - anchor.x)) + (cos_a * cos_b * (this.y - anchor.y)) - (cos_a * sin_b * (this.z - anchor.z)) + anchor.y,
-            nz = (sin_b * (this.y - anchor.y)) + (cos_b * (this.z - anchor.z)) + anchor.z;
+            sin_c = Math.sin(radians_c),
+            nx = (cos_a * cos_b * 1 * (this.x - anchor.x)) + (-1 * sin_a * (this.y - anchor.y)) + (sin_b * (this.z - anchor.z)) + anchor.x,
+            ny = (sin_a * (this.x - anchor.x)) + (cos_a * 1 * cos_c * (this.y - anchor.y)) + (-1 * sin_c * (this.z - anchor.z)) + anchor.y,
+            nz = (-1 * sin_b * (this.x - anchor.x)) + (sin_c * (this.y - anchor.y)) + (1 * cos_b * cos_c * (this.z - anchor.z)) + anchor.z;
             //putain d'opérations de matrices
 
             this.x = nx;
@@ -135,15 +140,17 @@ class Univers {
         }
     }
 
-    rotate3D(angle_a, angle_b) {
+    rotate3D(angle_a, angle_b, angle_c) {
         for (let i = 0; i < this.etoiles.length; i++) {
-            this.etoiles[i].rotate3D(angle_a, angle_b, this.fantir);
+            this.etoiles[i].rotate3D(angle_a, 0, 0, this.fantir);
+            this.etoiles[i].rotate3D(0, angle_b, 0, this.fantir);
+            this.etoiles[i].rotate3D(0, 0, angle_c, this.fantir);
         }
     }
 
-    set_angles(angle_a, angle_b) {
+    set_angles(angle_a, angle_b, angle_c) {
         this.reset();
-        this.rotate3D(angle_a, angle_b);
+        this.rotate3D(angle_a, angle_b, angle_c);
     }
 
     reset() {
@@ -166,82 +173,80 @@ window.onload = function() {
     let sphere = new Univers("map", etoiles);
     sphere.draw();
 
-    let wrapper_rot = document.getElementById("rotation"),
-        rot_handle = document.getElementById("rotation_handle"),
-        rot_container = document.getElementById("rotation_container"),
-        box_wrapper_rot = wrapper_rot.getBoundingClientRect(),
-        box_rot_container = rot_container.getBoundingClientRect(),
-        box_rot_handle = rot_handle.getBoundingClientRect();
+    let ang_x = 0,
+        ang_y = 0,
+        ang_z = 0,
+        range_x = document.getElementById("range_x"),
+        range_y = document.getElementById("range_y"),
+        range_z = document.getElementById("range_z");
 
-    rot_handle.onmousedown = function(evt) {
-        let offset_x = evt.clientX - box_rot_handle.left,
-            offset_y = evt.clientY - box_rot_handle.top;
-
-        function move_to(nx, ny) {
-            let new_x = nx - box_wrapper_rot.left,
-                new_y = ny - box_wrapper_rot.top,
-                min_x = box_rot_container.left - box_wrapper_rot.left,
-                max_x = min_x + box_rot_container.width,
-                min_y = box_rot_container.top - box_wrapper_rot.top,
-                max_y = min_y + box_rot_container.height;
-
-            if (new_x <= max_x && new_x >= min_x) {
-                rot_handle.setAttribute("cx", "" + new_x);
-            } else {
-                if (new_x > max_x) {
-                    new_x = max_x-1;
-                }
-                if (new_x < min_x) {
-                    new_x = min_x+1;
-                }
-            }
-
-            if (new_y <= max_y && new_y >= min_y) {
-                rot_handle.setAttribute("cy", "" + new_y);
-            } else {
-                if (new_y > max_y) {
-                    new_y = max_y-1;
-                }
-                if (new_y < min_y) {
-                    new_y = min_y+1;
-                }
-                document.removeEventListener("mousemove", moving);
-                rot_handle.onmouseup = null;
-            }
-
-            let angle_a = scale_between(new_x, 0, 90, min_x, max_x) - 45,
-                angle_b = scale_between(new_y, 0, 90, min_y, max_y) - 45;
-            sphere.set_angles(angle_a, angle_b);
-            sphere.draw();
+    range_x.onmousedown = function() {
+        let set_ang_x = function() {
+            window.requestAnimationFrame(function() {
+                ang_x = parseFloat(range_x.value);
+                sphere.set_angles(ang_x, ang_y, ang_z);
+                sphere.draw();
+            });
         }
 
-        move_to(evt.clientX, evt.clientY);
+        set_ang_x();
+        range_x.addEventListener("mousemove", set_ang_x);
 
-        function moving(evt) {
-            move_to(evt.clientX, evt.clientY);
-        }
-
-        document.addEventListener("mousemove", moving);
-
-        rot_handle.onmouseup = function() {
-            document.removeEventListener("mousemove", moving);
-            rot_handle.onmouseup = null;
+        range_x.onmouseup = function(){
+            range_x.removeEventListener("mousemove", set_ang_x);
         }
     }
 
-    rot_handle.ondragstart = function() {
-      return false;
-    };
+    range_y.onmousedown = function() {
+        let set_ang_y = function() {
+            window.requestAnimationFrame(function() {
+                ang_y = parseFloat(range_y.value);
+                sphere.set_angles(ang_x, ang_y, ang_z);
+                sphere.draw();
+            });
+        }
+
+        set_ang_y();
+        range_y.addEventListener("mousemove", set_ang_y);
+
+        range_y.onmouseup = function(){
+            range_y.removeEventListener("mousemove", set_ang_y);
+        }
+    }
+
+    range_z.onmousedown = function() {
+        let set_ang_z = function() {
+            window.requestAnimationFrame(function() {
+                ang_z = parseFloat(range_z.value);
+                sphere.set_angles(ang_x, ang_y, ang_z);
+                sphere.draw();
+            });
+        }
+
+        set_ang_z();
+        range_z.addEventListener("mousemove", set_ang_z);
+
+        range_z.onmouseup = function(){
+            range_z.removeEventListener("mousemove", set_ang_z);
+        }
+    }
 
     //let interval = setInterval(animate, 1000/60);
     function animate() {
-        sphere.rotate3D(-2,2);
+        sphere.rotate3D(2,2,2);
         sphere.draw();
     }
     document.getElementById("reset").addEventListener("click", function(){
         sphere.reset();
+        ang_x = 0;
+        ang_y = 0;
+        ang_z = 0;
+        range_x.value = "0";
+        range_y.value = "0";
+        range_z.value = "0";
         sphere.draw();
     }); 
+
 }
 
 function scale_between(unscaledNum, minAllowed, maxAllowed, min, max) {

@@ -11,7 +11,8 @@ body {
 	height: 100%;
 }
 
-#rotation {
+#gui {
+	display: none;
 	width: 400px;
 	height: 400px;
 	z-index: 2;
@@ -21,20 +22,3 @@ body {
 	border: 1px solid red;
 }
 
-#rotation_container {
-	stroke-width: 5;
-	stroke: #000;
-	fill: none;
-}
-
-#rotation_handle {
-	cursor: move;
-	stroke: none;
-	fill: #000;
-}
-
-#rotation_reset {
-	stroke: #f00;
-	stroke-width: 2;
-	fill: none;
-}
