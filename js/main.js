@@ -6,6 +6,9 @@ class Etoile {
         this.x = parseFloat(x);
         this.y = parseFloat(y);
         this.z = parseFloat(z);
+        this.ox = this.x;
+        this.oy = this.y;
+        this.oz = this.z;
         this.r = r;
         this.color = color;
 
@@ -45,6 +48,12 @@ class Etoile {
             this.x = nx;
             this.y = ny;
             this.z = nz;
+    }
+
+    reset() {
+        this.x = this.ox;
+        this.y = this.oy;
+        this.z = this.oz;
     }
 }
 
@@ -131,6 +140,17 @@ class Univers {
             this.etoiles[i].rotate3D(angle_a, angle_b, this.fantir);
         }
     }
+
+    set_angles(angle_a, angle_b) {
+        this.reset();
+        this.rotate3D(angle_a, angle_b);
+    }
+
+    reset() {
+        for (let i = 0; i < this.etoiles.length; i++) {
+            this.etoiles[i].reset();
+        }
+    }
 }
 
 window.onload = function() {
@@ -146,9 +166,84 @@ window.onload = function() {
     let sphere = new Univers("map", etoiles);
     sphere.draw();
 
-    let interval = setInterval(animate, 1000/60);
+    let wrapper_rot = document.getElementById("rotation"),
+        rot_handle = document.getElementById("rotation_handle"),
+        rot_container = document.getElementById("rotation_container"),
+        box_wrapper_rot = wrapper_rot.getBoundingClientRect(),
+        box_rot_container = rot_container.getBoundingClientRect(),
+        box_rot_handle = rot_handle.getBoundingClientRect();
+
+    rot_handle.onmousedown = function(evt) {
+        let offset_x = evt.clientX - box_rot_handle.left,
+            offset_y = evt.clientY - box_rot_handle.top;
+
+        function move_to(nx, ny) {
+            let new_x = nx - box_wrapper_rot.left,
+                new_y = ny - box_wrapper_rot.top,
+                min_x = box_rot_container.left - box_wrapper_rot.left,
+                max_x = min_x + box_rot_container.width,
+                min_y = box_rot_container.top - box_wrapper_rot.top,
+                max_y = min_y + box_rot_container.height;
+
+            if (new_x <= max_x && new_x >= min_x) {
+                rot_handle.setAttribute("cx", "" + new_x);
+            } else {
+                if (new_x > max_x) {
+                    new_x = max_x-1;
+                }
+                if (new_x < min_x) {
+                    new_x = min_x+1;
+                }
+            }
+
+            if (new_y <= max_y && new_y >= min_y) {
+                rot_handle.setAttribute("cy", "" + new_y);
+            } else {
+                if (new_y > max_y) {
+                    new_y = max_y-1;
+                }
+                if (new_y < min_y) {
+                    new_y = min_y+1;
+                }
+                document.removeEventListener("mousemove", moving);
+                rot_handle.onmouseup = null;
+            }
+
+            let angle_a = scale_between(new_x, 0, 90, min_x, max_x) - 45,
+                angle_b = scale_between(new_y, 0, 90, min_y, max_y) - 45;
+            sphere.set_angles(angle_a, angle_b);
+            sphere.draw();
+        }
+
+        move_to(evt.clientX, evt.clientY);
+
+        function moving(evt) {
+            move_to(evt.clientX, evt.clientY);
+        }
+
+        document.addEventListener("mousemove", moving);
+
+        rot_handle.onmouseup = function() {
+            document.removeEventListener("mousemove", moving);
+            rot_handle.onmouseup = null;
+        }
+    }
+
+    rot_handle.ondragstart = function() {
+      return false;
+    };
+
+    //let interval = setInterval(animate, 1000/60);
     function animate() {
-        sphere.rotate3D(2,2);
+        sphere.rotate3D(-2,2);
         sphere.draw();
     }
+    document.getElementById("reset").addEventListener("click", function(){
+        sphere.reset();
+        sphere.draw();
+    }); 
 }
+
+function scale_between(unscaledNum, minAllowed, maxAllowed, min, max) {
+  return (maxAllowed - minAllowed) * (unscaledNum - min) / (max - min) + minAllowed;
+} 
