@@ -22,7 +22,7 @@ body {
 	border: 1px solid red;
 }
 
-.slider {
+.controls {
 	z-index: 4;
 	position: fixed;
 	left: 50px;
