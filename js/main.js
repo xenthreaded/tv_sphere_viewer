@@ -173,61 +173,61 @@ window.onload = function() {
     let sphere = new Univers("map", etoiles);
     sphere.draw();
 
-    let ang_x = 0,
-        ang_y = 0,
-        ang_z = 0,
+    let around_z = 0,
+        around_y = 0,
+        around_x = 0,
         range_x = document.getElementById("range_x"),
         range_y = document.getElementById("range_y"),
         range_z = document.getElementById("range_z");
 
-    range_x.onmousedown = function() {
-        let set_ang_x = function() {
+    range_z.onmousedown = function() {
+        let set_rotation_around_z = function() {
             window.requestAnimationFrame(function() {
-                ang_x = parseFloat(range_x.value);
-                sphere.set_angles(ang_x, ang_y, ang_z);
+                around_z = parseFloat(range_z.value);
+                sphere.set_angles(around_z, around_y, around_x);
                 sphere.draw();
             });
         }
 
-        set_ang_x();
-        range_x.addEventListener("mousemove", set_ang_x);
+        set_rotation_around_z();
+        range_z.addEventListener("mousemove", set_rotation_around_z);
 
-        range_x.onmouseup = function(){
-            range_x.removeEventListener("mousemove", set_ang_x);
+        range_z.onmouseup = function(){
+            range_z.removeEventListener("mousemove", set_rotation_around_z);
         }
     }
 
     range_y.onmousedown = function() {
-        let set_ang_y = function() {
+        let set_rotation_around_y = function() {
             window.requestAnimationFrame(function() {
-                ang_y = parseFloat(range_y.value);
-                sphere.set_angles(ang_x, ang_y, ang_z);
+                around_y = parseFloat(range_y.value);
+                sphere.set_angles(around_z, around_y, around_x);
                 sphere.draw();
             });
         }
 
-        set_ang_y();
-        range_y.addEventListener("mousemove", set_ang_y);
+        set_rotation_around_y();
+        range_y.addEventListener("mousemove", set_rotation_around_y);
 
         range_y.onmouseup = function(){
-            range_y.removeEventListener("mousemove", set_ang_y);
+            range_y.removeEventListener("mousemove", set_rotation_around_y);
         }
     }
 
-    range_z.onmousedown = function() {
-        let set_ang_z = function() {
+    range_x.onmousedown = function() {
+        let set_rotation_around_x = function() {
             window.requestAnimationFrame(function() {
-                ang_z = parseFloat(range_z.value);
-                sphere.set_angles(ang_x, ang_y, ang_z);
+                around_x = parseFloat(range_x.value);
+                sphere.set_angles(around_z, around_y, around_x);
                 sphere.draw();
             });
         }
 
-        set_ang_z();
-        range_z.addEventListener("mousemove", set_ang_z);
+        set_rotation_around_x();
+        range_x.addEventListener("mousemove", set_rotation_around_x);
 
-        range_z.onmouseup = function(){
-            range_z.removeEventListener("mousemove", set_ang_z);
+        range_x.onmouseup = function(){
+            range_x.removeEventListener("mousemove", set_rotation_around_x);
         }
     }
 
@@ -238,9 +238,9 @@ window.onload = function() {
     }
     document.getElementById("reset").addEventListener("click", function(){
         sphere.reset();
-        ang_x = 0;
-        ang_y = 0;
-        ang_z = 0;
+        around_z = 0;
+        around_y = 0;
+        around_x = 0;
         range_x.value = "0";
         range_y.value = "0";
         range_z.value = "0";
