@@ -20,15 +20,35 @@ class Point {
             cos_c = Math.cos(radians_c),
             sin_a = Math.sin(radians_a),
             sin_b = Math.sin(radians_b),
-            sin_c = Math.sin(radians_c),
-            nx = (cos_a * cos_b * 1 * (this.x - anchor.x)) + (-1 * sin_a * (this.y - anchor.y)) + (sin_b * (this.z - anchor.z)) + anchor.x,
-            ny = (sin_a * (this.x - anchor.x)) + (cos_a * 1 * cos_c * (this.y - anchor.y)) + (-1 * sin_c * (this.z - anchor.z)) + anchor.y,
-            nz = (-1 * sin_b * (this.x - anchor.x)) + (sin_c * (this.y - anchor.y)) + (1 * cos_b * cos_c * (this.z - anchor.z)) + anchor.z;
-            //putain d'opérations de matrices
+            sin_c = Math.sin(radians_c);
 
-            this.x = nx;
-            this.y = ny;
-            this.z = nz;
+        this.rotate_around_z(cos_a, sin_a, anchor);
+        this.rotate_around_y(cos_b, sin_b, anchor);
+        this.rotate_around_x(cos_c, sin_c, anchor);
+    }
+
+    rotate_around_z(cos, sin, anchor) {
+        let nx = (cos * (this.x - anchor.x)) + (-1 * sin * (this.y - anchor.y)) + anchor.x,
+            ny = (sin * (this.x - anchor.x)) + (cos * (this.y - anchor.y)) + anchor.y;
+
+        this.x = nx;
+        this.y = ny;
+    }
+
+    rotate_around_y(cos, sin, anchor) {
+        let nx = (cos * (this.x - anchor.x)) + (sin * (this.z - anchor.z)) + anchor.x,
+            nz = (-1 * sin * (this.x - anchor.x)) + (cos * (this.z - anchor.z)) + anchor.z;
+
+        this.x = nx;
+        this.z = nz;
+    }
+
+    rotate_around_x(cos, sin, anchor) {
+        let ny = (cos * (this.y - anchor.y)) + (-1 * sin * (this.z - anchor.z)) + anchor.y,
+            nz = (sin * (this.y - anchor.y)) + (cos * (this.z - anchor.z)) + anchor.z;
+
+        this.y = ny;
+        this.z = nz;
     }
 
     reset() {
@@ -73,8 +93,14 @@ class Univers {
 
         this.center_h = this.canvas.width/2;
         this.center_v = this.canvas.height/2;
+        this.angle_a = 0;
+        this.angle_b = 0;
+        this.angle_c = 0;
 
         this.fantir = new Etoile("fantir", this.center_h, this.center_v, 0, 1*AL, "#ff0"); 
+        this.ref_x = new Point(10*AL, 0, 0);
+        this.ref_y = new Point(0, 10*AL, 0);
+        this.ref_z = new Point(0, 0, 10*AL);
 
         //{nom, x, y, z, taille, couleur}
         this.etoiles = new Array();
@@ -131,10 +157,16 @@ class Univers {
 
     rotate3D(angle_a, angle_b, angle_c) {
         for (let i = 0; i < this.etoiles.length; i++) {
-            this.etoiles[i].point.rotate3D(angle_a, 0, 0, this.fantir.point);
-            this.etoiles[i].point.rotate3D(0, angle_b, 0, this.fantir.point);
-            this.etoiles[i].point.rotate3D(0, 0, angle_c, this.fantir.point);
+            this.etoiles[i].point.rotate3D(angle_a, angle_b, angle_c, this.fantir.point);
         }
+
+        this.ref_x.rotate3D(angle_a, angle_b, angle_c, this.fantir.point);
+        this.ref_y.rotate3D(angle_a, angle_b, angle_c, this.fantir.point);
+        this.ref_z.rotate3D(angle_a, angle_b, angle_c, this.fantir.point);
+
+        this.angle_a = this.angle_a + angle_a;
+        this.angle_b = this.angle_b + angle_b;
+        this.angle_c = this.angle_c + angle_c;
     }
 
     set_angles(angle_a, angle_b, angle_c) {
@@ -146,6 +178,10 @@ class Univers {
         for (let i = 0; i < this.etoiles.length; i++) {
             this.etoiles[i].point.reset();
         }
+
+        this.angle_a = 0;
+        this.angle_b = 0;
+        this.angle_c = 0;
     }
 }
 
@@ -220,9 +256,9 @@ window.onload = function() {
         }
     }
 
-    //let interval = setInterval(animate, 1000/60);
+    let interval = setInterval(animate, 1000/60);
     function animate() {
-        sphere.rotate3D(2,2,2);
+        sphere.rotate3D(1.5,1.5,1.5);
         sphere.draw();
     }
     document.getElementById("reset").addEventListener("click", function(){
