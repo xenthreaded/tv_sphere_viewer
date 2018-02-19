@@ -1,38 +1,14 @@
 //TODO : 
 //  clean code (let AL = this.AL !!!)
 //  check a solution for rotate3D that doesn't need applying a rotation for each axis
-
-class Etoile {
-    constructor(name, x, y, z, r, color) {
-        this.name = name;
+class Point {
+    constructor(x, y, z) {
         this.x = parseFloat(x);
         this.y = parseFloat(y);
         this.z = parseFloat(z);
         this.ox = this.x;
         this.oy = this.y;
         this.oz = this.z;
-        this.r = r;
-        this.color = color;
-
-    }
-
-    draw(target) {
-        target.fillStyle = this.color;
-        target.beginPath();
-        target.arc(this.x, this.y, this.r, 0, Math.PI*2);
-        target.fill()
-        target.closePath();
-    }
-    
-    rotate2D(angle, anchor) {
-        let radians = (Math.PI / 180) * angle,
-            cos = Math.cos(radians),
-            sin = Math.sin(radians),
-            nx = (cos * (this.x - anchor.x)) + (sin * (this.y - anchor.y)) + anchor.x,
-            ny = (cos * (this.y - anchor.y)) - (sin * (this.x - anchor.x)) + anchor.y;
-
-        this.x = nx;
-        this.y = ny;
     }
 
     rotate3D(angle_a, angle_b, angle_c, anchor) {
@@ -62,6 +38,24 @@ class Etoile {
     }
 }
 
+class Etoile {
+    constructor(name, x, y, z, r, color) {
+        this.name = name;
+        this.r = r;
+        this.color = color;
+        this.point = new Point(x, y, z);
+    }
+
+    draw(target) {
+        target.fillStyle = this.color;
+        target.beginPath();
+        target.arc(this.point.x, this.point.y, this.r, 0, Math.PI*2);
+        target.fill()
+        target.closePath();
+    }
+    
+}
+
 class Univers {
     constructor(idCanvas, etoiles) {
         this.WIDTH = window.innerWidth || document.documentElement.clientWidth || document.getElementsByTagName('body')[0].clientWidth;
@@ -89,9 +83,9 @@ class Univers {
             this.etoiles.push(
                 new Etoile(
                 current.nom,
-                this.fantir.x + current.x*AL, 
-                this.fantir.y + current.y*AL, 
-                this.fantir.z + current.z*AL,
+                this.fantir.point.x + current.x*AL, 
+                this.fantir.point.y + current.y*AL, 
+                this.fantir.point.z + current.z*AL,
                 current.taille*AL,
                 current.couleur
             ));
@@ -109,20 +103,21 @@ class Univers {
         this.context.fillStyle = "#888";
         this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-        //Axes
+        //Guides
         this.context.strokeStyle = "#fff";
         this.context.beginPath()
-            this.context.moveTo(this.fantir.x, 0);
-            this.context.lineTo(this.fantir.x, this.canvas.height);
-            this.context.moveTo(0, this.fantir.y);
-            this.context.lineTo(this.canvas.width, this.fantir.y);
+            this.context.moveTo(this.fantir.point.x, 0);
+            this.context.lineTo(this.fantir.point.x, this.canvas.height);
+            this.context.moveTo(0, this.fantir.point.y);
+            this.context.lineTo(this.canvas.width, this.fantir.point.y);
             this.context.stroke();
         this.context.closePath();
 
         //Perimetres
+        this.context.strokeStyle = "#fff";
         this.context.beginPath();
-            this.context.arc(this.fantir.x, this.fantir.y, 25*this.AL, 0, Math.PI*2);
-            this.context.arc(this.fantir.x, this.fantir.y, 100*this.AL, 0, Math.PI*2);
+            this.context.arc(this.fantir.point.x, this.fantir.point.y, 25*this.AL, 0, Math.PI*2);
+            this.context.arc(this.fantir.point.x, this.fantir.point.y, 100*this.AL, 0, Math.PI*2);
             this.context.stroke();
         this.context.closePath();
 
@@ -134,17 +129,11 @@ class Univers {
 
     }
 
-    rotate2D(angle) {
-        for (let i = 0; i < this.etoiles.length; i++) {
-            this.etoiles[i].rotate2D(angle, this.fantir);
-        }
-    }
-
     rotate3D(angle_a, angle_b, angle_c) {
         for (let i = 0; i < this.etoiles.length; i++) {
-            this.etoiles[i].rotate3D(angle_a, 0, 0, this.fantir);
-            this.etoiles[i].rotate3D(0, angle_b, 0, this.fantir);
-            this.etoiles[i].rotate3D(0, 0, angle_c, this.fantir);
+            this.etoiles[i].point.rotate3D(angle_a, 0, 0, this.fantir.point);
+            this.etoiles[i].point.rotate3D(0, angle_b, 0, this.fantir.point);
+            this.etoiles[i].point.rotate3D(0, 0, angle_c, this.fantir.point);
         }
     }
 
@@ -155,7 +144,7 @@ class Univers {
 
     reset() {
         for (let i = 0; i < this.etoiles.length; i++) {
-            this.etoiles[i].reset();
+            this.etoiles[i].point.reset();
         }
     }
 }
