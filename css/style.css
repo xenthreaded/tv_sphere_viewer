@@ -22,3 +22,20 @@ body {
 	border: 1px solid red;
 }
 
+.slider {
+	z-index: 4;
+	position: fixed;
+	left: 50px;
+}
+
+#range_x {
+	top:40px;
+}
+
+#range_y {
+	top:70px;
+}
+
+#range_z {
+	top:80px;
+}
