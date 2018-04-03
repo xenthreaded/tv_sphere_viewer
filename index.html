@@ -4,15 +4,31 @@
 	<title>Visualisation de l'espaaaaace</title>
 	<link rel="stylesheet" type="text/css" href="css/style.css">
 	<meta charset="utf-8">
+	<script type="text/javascript" src="js/point.js"></script>
+	<script type="text/javascript" src="js/star.js"></script>
+	<script type="text/javascript" src="js/universe.js"></script>
 	<script type="text/javascript" src="js/main.js"></script>
 </head>
 <body>
-	<canvas id="map"></canvas>
-	<svg id="gui">
+	<svg id="map" viewBox="0 0 4000 2500" preserveAspectRatio="xMidYMid">
+		<g id="guides">
+			<line class="guide" id="center_x" x1="2000" y1="0" x2="2000" y2="2500"/>
+			<line class="guide" id="center_y" x1="0" y1="1250" x2="4000" y2="1250"/>
+			<circle class="guide" id="perim_100AL" cx="2000" cy="1250" r="1000"/>
+			<circle class="guide" id="perim_25AL" cx="2000" cy="1250" r="250"/>
+		</g>
+
+		<g id="stars">
+			
+		</g>
 	</svg>
+
 	<button id="reset" class="controls">Reset</button>
-	<input id="range_x" class="controls sliders" type="range" min="-180.0" max="180.0" step="any">
-	<input id="range_y" class="controls sliders" type="range" min="-180.0" max="180.0" step="any">
-	<input id="range_z" class="controls sliders" type="range" min="-180.0" max="180.0" step="any">
+	<id class="controls">
+		<button id="up">haut</button>
+		<button id="down">bas</button>
+		<button id="left">gauche</button>
+		<button id="right">droite</button>
+	</id>
 </body>
 </html>
