@@ -4,42 +4,80 @@ body {
 	justify-content: center;
 }
 
-#map {
-	z-index: 1;
-	margin: 0;
-	width: 100%;
-	height: 100%;
-}
+	#map {
+		z-index: 1;
+		width: 100vw;
+		height: 80vh;
+		background-color: grey;
+	}
+			.guide {
+				fill: none;
+				stroke: #fff;
+				stroke-width: 2;
+			}
 
-#gui {
-	display: none;
-	width: 400px;
-	height: 400px;
-	z-index: 2;
-	position: fixed;
-	left: 10%;
-	top: 10%;
-	border: 1px solid red;
-}
+			.planet {
+				fill: #fff;
+			}
 
-.controls {
-	z-index: 4;
-	position: fixed;
-	left: 50px;
-}
+			.CPM {
+				fill:yellow;
+			}
 
-.sliders {
-	width: 20%;
-}
+			.ANA {
+				fill:blue;
+			}
+				
+			.FHL {
+				fill:red;
+			}
+				
+			.REY {
+				fill:lightgreen;
+			}
+				
+			.LAT {
+				fill:green;
+			}
+				
+			.GMS {
+				fill:orange;
+			}
+				
+			.FEF {
+				fill:cyan;
+			}
+				
+			.FEF\/PU {
+				fill:turquoise;
+			}
+				
+			.HCK {
+				fill:darkred;
+			}
+				
+			.ELC {
+				fill:purple;
+			}
+				
+			.BDC {
+				fill:violet;
+			}
+				
+			.LGA {
+				fill:brown;
+			}
+				
+			.LAA {
+				fill:darkcyan;
+			}
+				
 
-#range_x {
-	top:40px;
-}
-
-#range_y {
-	top:70px;
-}
-
-#range_z {
-	top:100px;
-}
+	.controls {
+		z-index: 4;
+		position: fixed;
+		left: 2vw;
+		top: 2vh;
+		display: flex;
+		flex-direction: column;
+	}
